@@ -40,12 +40,6 @@ int EXPORT_OUT_API SMO_getStartDate(SMO_Handle p_handle, double *date);
 int EXPORT_OUT_API SMO_getTimes(SMO_Handle p_handle, SMO_time code, int *time);
 int EXPORT_OUT_API SMO_getElementName(SMO_Handle p_handle, SMO_elementType type, int elementIndex, char **elementName, int *size);
 
-// Time series retrieval functions - range validation contract:
-// - Object indices must be in range [0, N) where N is the count of objects  
-// - startPeriod must be in range [0, Nperiods) where Nperiods is total periods
-// - endPeriod must be in range (startPeriod, Nperiods] (exclusive upper bound enforced)
-// - The range [startPeriod, endPeriod) is accessed (startPeriod inclusive, endPeriod exclusive)
-// Returns error 420 for invalid object index, error 422 for invalid time range
 int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex, SMO_subcatchAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
 int EXPORT_OUT_API SMO_getNodeSeries(SMO_Handle p_handle, int nodeIndex, SMO_nodeAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
 int EXPORT_OUT_API SMO_getLinkSeries(SMO_Handle p_handle, int linkIndex, SMO_linkAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
