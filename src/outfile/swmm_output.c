@@ -487,10 +487,10 @@ int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex,
 
     if (p_data == NULL)
         errorcode = -1;
-    else if (subcatchIndex < 0 || subcatchIndex > p_data->Nsubcatch)
+    else if (subcatchIndex < 0 || subcatchIndex >= p_data->Nsubcatch)
         errorcode = 420;
     else if (startPeriod < 0 || startPeriod >= p_data->Nperiods ||
-             endPeriod <= startPeriod)
+             endPeriod <= startPeriod || endPeriod > p_data->Nperiods)
         errorcode = 422;
     // Check memory for outValues
     else if
@@ -525,10 +525,10 @@ int EXPORT_OUT_API SMO_getNodeSeries(SMO_Handle p_handle, int nodeIndex,
 
     if (p_data == NULL)
         errorcode = -1;
-    else if (nodeIndex < 0 || nodeIndex > p_data->Nnodes)
+    else if (nodeIndex < 0 || nodeIndex >= p_data->Nnodes)
         errorcode = 420;
     else if (startPeriod < 0 || startPeriod >= p_data->Nperiods ||
-             endPeriod <= startPeriod)
+             endPeriod <= startPeriod || endPeriod > p_data->Nperiods)
         errorcode = 422;
     // Check memory for outValues
     else if
@@ -562,10 +562,10 @@ int EXPORT_OUT_API SMO_getLinkSeries(SMO_Handle p_handle, int linkIndex,
 
     if (p_data == NULL)
         errorcode = -1;
-    else if (linkIndex < 0 || linkIndex > p_data->Nlinks)
+    else if (linkIndex < 0 || linkIndex >= p_data->Nlinks)
         errorcode = 420;
     else if (startPeriod < 0 || startPeriod >= p_data->Nperiods ||
-             endPeriod <= startPeriod)
+             endPeriod <= startPeriod || endPeriod > p_data->Nperiods)
         errorcode = 422;
     // Check memory for outValues
     else if
@@ -599,7 +599,7 @@ int EXPORT_OUT_API SMO_getSystemSeries(SMO_Handle p_handle, SMO_systemAttribute 
     if (p_data == NULL)
         errorcode = -1;
     else if (startPeriod < 0 || startPeriod >= p_data->Nperiods ||
-             endPeriod <= startPeriod)
+             endPeriod <= startPeriod || endPeriod > p_data->Nperiods)
         errorcode = 422;
     // Check memory for outValues
     else if

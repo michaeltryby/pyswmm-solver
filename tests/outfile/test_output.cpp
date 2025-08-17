@@ -360,4 +360,64 @@ BOOST_FIXTURE_TEST_CASE(test_getSystemResult, Fixture) {
     BOOST_CHECK(check_cdd_float(test_vec, ref_vec, 3));
 }
 
+// Regression tests for bounds checking fixes
+BOOST_FIXTURE_TEST_CASE(test_subcatch_bounds_regression, Fixture) {
+    // Test that index == Nsubcatch is now rejected (off-by-one fix)
+    // Based on test data having 8 subcatchments (0-7), index 8 should be rejected
+    error = SMO_getSubcatchSeries(p_handle, 8, SMO_runoff_rate, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 420); // Should be error 420 (invalid object index)
+    
+    // Valid boundary case - last valid index should work
+    error = SMO_getSubcatchSeries(p_handle, 7, SMO_runoff_rate, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 0); // Should succeed
+}
+
+BOOST_FIXTURE_TEST_CASE(test_node_bounds_regression, Fixture) {
+    // Test that index == Nnodes is now rejected (off-by-one fix)
+    // Based on test data having 14 nodes (0-13), index 14 should be rejected
+    error = SMO_getNodeSeries(p_handle, 14, SMO_invert_depth, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 420); // Should be error 420 (invalid object index)
+    
+    // Valid boundary case - last valid index should work
+    error = SMO_getNodeSeries(p_handle, 13, SMO_invert_depth, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 0); // Should succeed
+}
+
+BOOST_FIXTURE_TEST_CASE(test_link_bounds_regression, Fixture) {
+    // Test that index == Nlinks is now rejected (off-by-one fix)
+    // Based on test data having 13 links (0-12), index 13 should be rejected
+    error = SMO_getLinkSeries(p_handle, 13, SMO_flow_rate_link, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 420); // Should be error 420 (invalid object index)
+    
+    // Valid boundary case - last valid index should work
+    error = SMO_getLinkSeries(p_handle, 12, SMO_flow_rate_link, 0, 10, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 0); // Should succeed
+}
+
+BOOST_FIXTURE_TEST_CASE(test_endperiod_bounds_regression, Fixture) {
+    // First, get the actual number of periods in the test data
+    int numPeriods = -1;
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &numPeriods);
+    BOOST_REQUIRE(error == 0);
+    
+    // Test that endPeriod == Nperiods should be valid (inclusive range [0, Nperiods))
+    error = SMO_getSubcatchSeries(p_handle, 0, SMO_runoff_rate, 0, numPeriods, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 0); // Should succeed - this gets periods 0 to (numPeriods-1)
+    
+    // Test that endPeriod > Nperiods is rejected (exclusive endPeriod fix)
+    error = SMO_getNodeSeries(p_handle, 0, SMO_invert_depth, 0, numPeriods + 1, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 422); // Should be error 422 (invalid time period)
+    
+    // Test all series functions with out-of-bounds endPeriod
+    error = SMO_getLinkSeries(p_handle, 0, SMO_flow_rate_link, 0, numPeriods + 1, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 422); // Should be error 422 (invalid time period)
+    
+    error = SMO_getSystemSeries(p_handle, SMO_runoff_flow, 0, numPeriods + 1, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 422); // Should be error 422 (invalid time period)
+    
+    // Test with extreme out-of-bounds value
+    error = SMO_getSubcatchSeries(p_handle, 0, SMO_runoff_rate, 0, numPeriods + 1000, &array, &array_dim);
+    BOOST_CHECK_EQUAL(error, 422); // Should be error 422 (invalid time period)
+}
+
 BOOST_AUTO_TEST_SUITE_END()
