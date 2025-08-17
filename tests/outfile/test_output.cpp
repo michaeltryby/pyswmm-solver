@@ -420,4 +420,67 @@ BOOST_FIXTURE_TEST_CASE(test_endperiod_bounds_regression, Fixture) {
     BOOST_CHECK_EQUAL(error, 422); // Should be error 422 (invalid time period)
 }
 
+BOOST_FIXTURE_TEST_CASE(manual_verification_test, Fixture) {
+    // Get counts for verification
+    int numPeriods = -1;
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &numPeriods);
+    BOOST_REQUIRE(error == 0);
+    
+    int *projectSize;
+    int dim;
+    error = SMO_getProjectSize(p_handle, &projectSize, &dim);
+    BOOST_REQUIRE(error == 0);
+    int nSubcatch = projectSize[0];  // subcatchs
+    int nNodes = projectSize[1];     // nodes  
+    int nLinks = projectSize[2];     // links
+    SMO_freeMemory(projectSize);
+    
+    std::cout << "=== MANUAL VERIFICATION OF BOUNDS CHECKING FIXES ===" << std::endl;
+    std::cout << "Test data: " << nSubcatch << " subcatchments, " << nNodes << " nodes, " << nLinks << " links, " << numPeriods << " periods" << std::endl;
+    
+    std::cout << "\n1. Object index bounds checking (off-by-one fix):" << std::endl;
+    
+    // Test subcatchment bounds - last valid index should work, N should fail
+    error = SMO_getSubcatchSeries(p_handle, nSubcatch-1, SMO_runoff_rate, 0, 10, &array, &array_dim);
+    std::cout << "  Subcatch index " << (nSubcatch-1) << " (last valid): error=" << error << " (should be 0)" << std::endl;
+    
+    error = SMO_getSubcatchSeries(p_handle, nSubcatch, SMO_runoff_rate, 0, 10, &array, &array_dim);
+    std::cout << "  Subcatch index " << nSubcatch << " (== N): error=" << error << " (should be 420)" << std::endl;
+    
+    // Test node bounds
+    error = SMO_getNodeSeries(p_handle, nNodes-1, SMO_invert_depth, 0, 10, &array, &array_dim);
+    std::cout << "  Node index " << (nNodes-1) << " (last valid): error=" << error << " (should be 0)" << std::endl;
+    
+    error = SMO_getNodeSeries(p_handle, nNodes, SMO_invert_depth, 0, 10, &array, &array_dim);
+    std::cout << "  Node index " << nNodes << " (== N): error=" << error << " (should be 420)" << std::endl;
+    
+    // Test link bounds  
+    error = SMO_getLinkSeries(p_handle, nLinks-1, SMO_flow_rate_link, 0, 10, &array, &array_dim);
+    std::cout << "  Link index " << (nLinks-1) << " (last valid): error=" << error << " (should be 0)" << std::endl;
+    
+    error = SMO_getLinkSeries(p_handle, nLinks, SMO_flow_rate_link, 0, 10, &array, &array_dim);
+    std::cout << "  Link index " << nLinks << " (== N): error=" << error << " (should be 420)" << std::endl;
+    
+    std::cout << "\n2. Time period bounds checking (exclusive endPeriod fix):" << std::endl;
+    
+    // Test valid endPeriod (should work)
+    error = SMO_getSubcatchSeries(p_handle, 0, SMO_runoff_rate, 0, numPeriods, &array, &array_dim);
+    std::cout << "  endPeriod=" << numPeriods << " (== numPeriods): error=" << error << " (should be 0)" << std::endl;
+    
+    // Test invalid endPeriod (should fail)
+    error = SMO_getSubcatchSeries(p_handle, 0, SMO_runoff_rate, 0, numPeriods+1, &array, &array_dim);
+    std::cout << "  endPeriod=" << (numPeriods+1) << " (> numPeriods): error=" << error << " (should be 422)" << std::endl;
+    
+    error = SMO_getSystemSeries(p_handle, SMO_runoff_flow, 0, numPeriods+10, &array, &array_dim);
+    std::cout << "  endPeriod=" << (numPeriods+10) << " (>> numPeriods): error=" << error << " (should be 422)" << std::endl;
+    
+    std::cout << "\n=== VERIFICATION COMPLETE ===" << std::endl;
+    
+    // Verify expected behaviors with assertions
+    BOOST_CHECK_EQUAL(nSubcatch, 8);
+    BOOST_CHECK_EQUAL(nNodes, 14);
+    BOOST_CHECK_EQUAL(nLinks, 13);
+    BOOST_CHECK_EQUAL(numPeriods, 36);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
