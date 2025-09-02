@@ -9,13 +9,23 @@
 #
 
 
-find_package(OpenMP
-    OPTIONAL_COMPONENTS
-        C
-)
+# If wheel build on Apple fetch and build OpenMP Library
+if (APPLE)
+    include(
+        ../../cmake/openmp.cmake
+    )
+else()
+    find_package(
+      OpenMP
+        REQUIRED
+            C
+    )
+endif()
 
 # Generate version header
-include(../../extern/version.cmake)
+include(
+    ../../extern/version.cmake
+)
 
 
 # configure file groups
@@ -75,8 +85,7 @@ target_link_options(swmm5
 target_link_libraries(swmm5
     PUBLIC
         $<$<NOT:$<BOOL:$<C_COMPILER_ID:MSVC>>>:m>
-        $<$<BOOL:${OpenMP_C_FOUND}>:OpenMP::OpenMP_C>
-        $<$<BOOL:${OpenMP_AVAILABLE}>:omp>
+        $<$<TARGET_EXISTS:OpenMP::OpenMP_C>:OpenMP::OpenMP_C>
 )
 
 target_include_directories(swmm5
@@ -133,9 +142,9 @@ install(
 )
 
 install(
-    FILES 
-        ${SWMM_PUBLIC_HEADERS} 
-    DESTINATION 
+    FILES
+        ${SWMM_PUBLIC_HEADERS}
+    DESTINATION
         "${INCLUDE_DIST}"
 )
 
