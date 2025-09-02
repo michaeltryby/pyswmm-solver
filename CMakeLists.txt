@@ -12,7 +12,7 @@
 ##################    CMAKELISTS FOR SWMM-SOLVER PROJECT    ####################
 ################################################################################
 
-cmake_minimum_required (VERSION 4.0.2)
+cmake_minimum_required (VERSION 3.23.0)
 
 # Disable in-source builds (they are messy)
 if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
