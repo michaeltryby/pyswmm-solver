@@ -1545,8 +1545,22 @@ char* getTempFileName(char* fname)
 // For non-Windows systems:
 #else
 
+   // PYSWMM EDIT: put scratchfile in tempdir #############################
+    const char *tmpdir;
+    if (strlen(TempDir) > 0) {
+        tmpdir = TempDir;
+    } else if (getenv("TMPDIR") && strlen(getenv("TMPDIR")) > 0) {
+        tmpdir = getenv("TMPDIR");
+    } else {
+        #ifdef P_tmpdir
+            tmpdir = P_tmpdir; // fallback to system default in stdio.h
+        #else
+            tmpdir = "/tmp"; // fallback to hardcoded default
+        #endif
+    }
     // --- use system function mkstemp() to create a temporary file name
-    sstrncpy(fname, "swmmXXXXXX", MAXFNAME);
+    snprintf(fname, MAXFNAME, "%s/swmmXXXXXX", tmpdir);
+    // #####################################################################
     mkstemp(fname);
     return fname;
 
