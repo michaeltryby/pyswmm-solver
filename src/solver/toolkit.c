@@ -237,7 +237,7 @@ EXPORT_TOOLKIT int swmm_setSimulationDateTime(SM_TimePropety type, int year, int
     // Check if Simulation is Running
     else if(swmm_IsStartedFlag() == TRUE)
     {
-        error_code = ERR_TKAPI_SIM_NRUNNING;
+        error_code = ERR_TKAPI_SIM_RUNNING;
     }
     else
     {
@@ -441,7 +441,7 @@ EXPORT_TOOLKIT int  swmm_setSimulationParam(SM_SimSetting type, double value)
     // Check if Simulation is Running
     else if(swmm_IsStartedFlag() == TRUE)
     {
-        error_code = ERR_TKAPI_SIM_NRUNNING;
+        error_code = ERR_TKAPI_SIM_RUNNING;
     }
     else
     {
@@ -794,7 +794,7 @@ EXPORT_TOOLKIT int swmm_setNodeParam(int index, SM_NodeProperty param, double va
      // Check if Simulation is Running
     else if(swmm_IsStartedFlag() == TRUE)
     {
-        error_code = ERR_TKAPI_SIM_NRUNNING;
+        error_code = ERR_TKAPI_SIM_RUNNING;
     }
     // Check if object index is within bounds
     else if (index < 0 || index >= Nobjects[NODE])
@@ -895,14 +895,14 @@ EXPORT_TOOLKIT int swmm_setLinkParam(int index, SM_LinkProperty param, double va
                 // Check if Simulation is Running
                 if(swmm_IsStartedFlag() == TRUE)
                 {
-                    error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                    error_code = ERR_TKAPI_SIM_RUNNING; break;
                 }
                 Link[index].offset1 = value / UCF(LENGTH); break;
             case SM_OFFSET2:
                 // Check if Simulation is Running
                 if(swmm_IsStartedFlag() == TRUE)
                 {
-                    error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                    error_code = ERR_TKAPI_SIM_RUNNING; break;
                 }
                 Link[index].offset2 = value / UCF(LENGTH); break;
             case SM_INITFLOW:
@@ -1124,7 +1124,7 @@ EXPORT_TOOLKIT int swmm_setSubcatchParam(int index, SM_SubcProperty param, doubl
      // Check if Simulation is Running
     else if(swmm_IsStartedFlag() == TRUE)
     {
-        error_code = ERR_TKAPI_SIM_NRUNNING;
+        error_code = ERR_TKAPI_SIM_RUNNING;
     }
     // Check if object index is within bounds
     else if (index < 0 || index >= Nobjects[SUBCATCH])
@@ -1308,7 +1308,7 @@ EXPORT_TOOLKIT int swmm_setLidUParam(int index, int lidIndex, SM_LidUProperty pa
     // Check if model is running
     else if(swmm_IsStartedFlag() == TRUE)
     {
-        error_code = ERR_TKAPI_SIM_NRUNNING;
+        error_code = ERR_TKAPI_SIM_RUNNING;
     }
     else
     {
@@ -1433,11 +1433,11 @@ EXPORT_TOOLKIT int swmm_setLidUOption(int index, int lidIndex, SM_LidUOptions pa
             switch (param)
             {
             case SM_INDEX:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_NUMBER:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_TOPERV:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_DRAINSUB:
                 lidUnit->drainSubcatch = value;
                 lidUnit->drainNode = -1;
@@ -1745,15 +1745,15 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
             switch (param)
             {
             case SM_THICKNESS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_VOIDFRAC:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_ROUGHNESS:
                 lidProc->surface.roughness = value; break;
             case SM_SURFSLOPE:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_SIDESLOPE:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             default:
                 error_code = ERR_TKAPI_OUTBOUNDS; break;
             }
@@ -1762,19 +1762,19 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
             switch (param)
             {
             case SM_THICKNESS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_POROSITY:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_FIELDCAP:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_WILTPOINT:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_KSAT:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_KSLOPE:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_SUCTION:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             default:
                 error_code = ERR_TKAPI_OUTBOUNDS; break;
             }
@@ -1783,11 +1783,11 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
             switch (param)
             {
             case SM_THICKNESS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_VOIDFRAC:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_KSAT:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_CLOGFACTOR:
                 lidProc->storage.clogFactor = value *
                     lidProc->storage.thickness *
@@ -1801,13 +1801,13 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
             switch (param)
             {
             case SM_THICKNESS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_VOIDFRAC:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_IMPERVFRAC:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_KSAT:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_CLOGFACTOR:
                 lidProc->pavement.clogFactor = value *
                     lidProc->pavement.thickness *
@@ -1815,9 +1815,9 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
                     (1.0 - lidProc->pavement.impervFrac);
                 break;
             case SM_REGENDAYS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_REGENDEGREE:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             default:
                 error_code = ERR_TKAPI_OUTBOUNDS; break;
             }
@@ -1845,9 +1845,9 @@ EXPORT_TOOLKIT int swmm_setLidCParam(int lidControlIndex, SM_LidLayer layerIndex
             switch (param)
             {
             case SM_THICKNESS:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_VOIDFRAC:
-                error_code = ERR_TKAPI_SIM_NRUNNING; break;
+                error_code = ERR_TKAPI_SIM_RUNNING; break;
             case SM_ROUGHNESS:
                 lidProc->drainMat.roughness = value; break;
            //case SM_ALPHA:
