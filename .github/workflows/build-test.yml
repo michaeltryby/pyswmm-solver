@@ -37,7 +37,7 @@ jobs:
                 shell: cmd
                 working-directory: ./ci-tools/windows
 
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             # Statically link libraries with -s switch to address GitHub Ubuntu 20.04 symbol errors (issue #340)
             build_unit_test: make.sh -s -t -g "Unix Makefiles"
             build_reg_test: make.sh -s -g "Unix Makefiles"
@@ -52,7 +52,7 @@ jobs:
                 shell: bash
                 working-directory: ./ci-tools/linux
 
-          - os: macos-latest
+          - os: macos-15
             build_unit_test: make.zsh -t -g "Xcode"
             build_reg_test: make.zsh -g "Xcode"
             before_reg_test: before-nrtest.zsh
