@@ -1,0 +1,60 @@
+{
+  "version": 7,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/install/${presetName}"
+    },
+    {
+      "name": "darwin",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Xcode"
+    },
+    {
+      "name": "darwin-release",
+      "displayName": "Darwin Release",
+      "description": "Configuration for Release on macOS host",
+      "inherits": "darwin",
+      "cacheVariables": {
+        "BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "darwin-debug",
+      "displayName": "Darwin Debug",
+      "description": "Configuration for Debug on macOS host",
+      "inherits": "darwin",
+      "cacheVariables": {  
+        "BUILD_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "darwin-release",
+      "description": "Builds darwin Release",
+      "configurePreset": "darwin-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "darwin-debug",
+      "description": "Builds darwin Debug/Test",
+      "configurePreset": "darwin-debug",
+      "configuration": "Debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "darwin-debug",
+      "description": "Run tests on macOS host",
+      "configurePreset": "darwin-debug",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
