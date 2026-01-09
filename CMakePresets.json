@@ -89,13 +89,13 @@
     },
         {
       "name": "darwin-release",
-      "description": "Builds darwin Release",
+      "description": "Builds Darwin Release",
       "configurePreset": "darwin-release",
       "inherits": "build-release"
     },
     {
       "name": "darwin-debug",
-      "description": "Builds darwin Debug/Test",
+      "description": "Builds Darwin Debug/Test",
       "configurePreset": "darwin-debug",
       "inherits": "build-debug"
     }
