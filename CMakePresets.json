@@ -6,7 +6,6 @@
       "name": "windows", 
       "hidden": true, 
       "generator": "Visual Studio 17 2022", 
-      "architecture": { "value": "x64" },
       "inherits": "cfg-base"
     },
     { 
@@ -50,13 +49,13 @@
     {
       "name": "darwin-release",
       "displayName": "Darwin Release",
-      "description": "Configuration for Release on MacOS host",
+      "description": "Configuration for Release on Darwin host",
       "inherits": ["darwin", "cfg-release"]
     },
     {
       "name": "darwin-debug",
       "displayName": "Darwin Debug",
-      "description": "Configuration for Debug on MacOS host",
+      "description": "Configuration for Debug on Darwin host",
       "inherits": ["darwin", "cfg-debug"]
     }
   ],
@@ -116,7 +115,7 @@
     },
     {
       "name": "darwin-debug",
-      "description": "Run tests on MacOS host",
+      "description": "Run tests on Darwin host",
       "configurePreset": "darwin-debug",
       "inherits": "test-debug"
     }
