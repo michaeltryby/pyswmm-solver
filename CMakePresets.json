@@ -87,7 +87,7 @@
       "configurePreset": "linux-debug",
       "inherits": "build-debug"
     },
-        {
+    {
       "name": "darwin-release",
       "description": "Builds Darwin Release",
       "configurePreset": "darwin-release",
