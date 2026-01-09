@@ -132,20 +132,20 @@ BOOST_FIXTURE_TEST_CASE(sim_started_check, FixtureBeforeStep) {
     BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
     //Subcatchment
     error = swmm_setSubcatchParam(0, SM_WIDTH, 1);
-    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
 
 
     //Node
     error = swmm_setNodeParam(0, SM_INVERTEL, 1);
-    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
 
 
     //Link
     error = swmm_setLinkParam(0, SM_OFFSET1, 1);
-    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
 
     error = swmm_setLinkParam(0, SM_OFFSET2, 1);
-    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+    BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
 
     error = swmm_setLinkParam(0, SM_INITFLOW, 1);
     BOOST_CHECK_EQUAL(error, ERR_NONE);

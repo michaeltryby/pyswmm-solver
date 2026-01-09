@@ -24,6 +24,7 @@
 #define ERR_TKAPI_SIM_NRUNNING 2002
 #define ERR_TKAPI_OBJECT_INDEX 2004
 #define ERR_TKAPI_UNDEFINED_LID 2010
+#define ERR_TKAPI_SIM_RUNNING 2013
 
 using namespace std;
 
@@ -159,43 +160,43 @@ BOOST_AUTO_TEST_SUITE(test_lid_toolkitapi_fixture)
 
         //Lid Surface
         error = swmm_setLidCParam(0, SM_SURFACE, SM_THICKNESS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SURFACE, SM_VOIDFRAC, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SURFACE, SM_ROUGHNESS, db_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidCParam(0, SM_SURFACE, SM_SURFSLOPE, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SURFACE, SM_SIDESLOPE, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SURFACE, SM_ALPHA, db_value);
         BOOST_CHECK_EQUAL(error, ERR_TKAPI_OUTBOUNDS);
 
         //Lid Soil
         error = swmm_setLidCParam(0, SM_SOIL, SM_THICKNESS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_POROSITY, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_FIELDCAP, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_WILTPOINT, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_SUCTION, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_KSAT, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_KSLOPE, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_SOIL, SM_CLOGFACTOR, db_value);
         BOOST_CHECK_EQUAL(error, ERR_TKAPI_OUTBOUNDS);
 
         //Lid Storage
         error = swmm_setLidCParam(0, SM_STOR, SM_THICKNESS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_STOR, SM_VOIDFRAC, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_STOR, SM_KSAT, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_STOR, SM_CLOGFACTOR, db_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidCParam(0, SM_STOR, SM_ROUGHNESS, db_value);
@@ -203,19 +204,19 @@ BOOST_AUTO_TEST_SUITE(test_lid_toolkitapi_fixture)
 
         //Lid Pavement
         error = swmm_setLidCParam(0, SM_PAVE, SM_THICKNESS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_VOIDFRAC, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_IMPERVFRAC, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_KSAT, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_CLOGFACTOR, db_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidCParam(0, SM_PAVE, SM_REGENDAYS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_REGENDEGREE, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_PAVE, SM_WILTPOINT, db_value);
         BOOST_CHECK_EQUAL(error, ERR_TKAPI_OUTBOUNDS);
 
@@ -237,9 +238,9 @@ BOOST_AUTO_TEST_SUITE(test_lid_toolkitapi_fixture)
 
         //Lid DrainMat
         error = swmm_setLidCParam(0, SM_DRAINMAT, SM_THICKNESS, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_DRAINMAT, SM_VOIDFRAC, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidCParam(0, SM_DRAINMAT, SM_ROUGHNESS, db_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidCParam(0, SM_DRAINMAT, SM_CLOGFACTOR, db_value);
@@ -251,15 +252,15 @@ BOOST_AUTO_TEST_SUITE(test_lid_toolkitapi_fixture)
         error = swmm_getLidUParam(0, 0, SM_UNITAREA, &db_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidUParam(0, 0, SM_UNITAREA, db_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_getLidUOption(0, 0, SM_INDEX, &int_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidUOption(0, 0, SM_INDEX, int_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidUOption(0, 0, SM_NUMBER, int_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidUOption(0, 0, SM_TOPERV, int_value);
-        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_NRUNNING);
+        BOOST_CHECK_EQUAL(error, ERR_TKAPI_SIM_RUNNING);
         error = swmm_setLidUOption(0, 0, SM_DRAINSUB, int_value);
         BOOST_CHECK_EQUAL(error, ERR_NONE);
         error = swmm_setLidUOption(0, 0, SM_DRAINNODE, int_value);
