@@ -476,6 +476,60 @@ int EXPORT_OUT_API SMO_getElementName(SMO_Handle p_handle, SMO_elementType type,
     return set_error(p_data->error_handle, errorcode);
 }
 
+
+// ...existing code...
+
+int EXPORT_OUT_API SMO_getDateTime(SMO_Handle p_handle, int periodIndex, double *date)
+//
+//  Purpose: Return the REAL8 timestamp at a given 0-based period index.
+//
+{
+    int    errorcode = 0;
+    data_t *p_data = (data_t *)p_handle;
+
+    if (!date) return -1;
+    *date = -1.0;
+
+    if (p_data == NULL) errorcode = -1;
+    else if (periodIndex < 0 || periodIndex >= p_data->Nperiods) errorcode = 422;
+    else *date = getTimeValue(p_data, periodIndex);
+
+    return set_error(p_data->error_handle, errorcode);
+}
+
+int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int endPeriod,
+                                     double **outDateArray, int *length)
+//
+//  Purpose: Return an array of REAL8 timestamps for [startPeriod, endPeriod] (0-based, inclusive).
+//
+{
+    int     k, len, errorcode = 0;
+    double *temp = NULL;
+    data_t *p_data = (data_t *)p_handle;
+
+    if (!outDateArray || !length) return -1;
+    *outDateArray = NULL;
+    *length = 0;
+
+    if (p_data == NULL) errorcode = -1;
+    else if (startPeriod < 0 || endPeriod < startPeriod || endPeriod >= p_data->Nperiods)
+        errorcode = 422;
+    else {
+        len = endPeriod - startPeriod + 1;
+        temp = (double *)malloc((size_t)len * sizeof(double));
+        if (!temp) errorcode = 414;
+        else {
+            for (k = 0; k < len; k++)
+                temp[k] = getTimeValue(p_data, startPeriod + k);
+            *outDateArray = temp;
+            *length = len;
+        }
+    }
+    if (errorcode && temp) { free(temp); *outDateArray = NULL; *length = 0; }
+    return set_error(p_data->error_handle, errorcode);
+}
+
+
 int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex,
     SMO_subcatchAttribute attr, int startPeriod, int endPeriod,
     float **outValueArray, int *length)
