@@ -477,7 +477,6 @@ int EXPORT_OUT_API SMO_getElementName(SMO_Handle p_handle, SMO_elementType type,
 }
 
 
-// ...existing code...
 
 int EXPORT_OUT_API SMO_getDateTime(SMO_Handle p_handle, int periodIndex, double *date)
 //
@@ -528,6 +527,7 @@ int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int e
     if (errorcode && temp) { free(temp); *outDateArray = NULL; *length = 0; }
     return set_error(p_data->error_handle, errorcode);
 }
+
 
 
 int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex,
