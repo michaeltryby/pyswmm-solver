@@ -262,6 +262,105 @@ BOOST_FIXTURE_TEST_CASE(test_getElementName, Fixture) {
     SMO_freeMemory((void*)c_array);
 }
 
+
+
+BOOST_FIXTURE_TEST_CASE(test_getDateTime, Fixture) {
+    // Gather meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 0);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // First
+    double dt = -1.0;
+    int period = 0;
+    error = SMO_getDateTime(p_handle, period, &dt);
+    BOOST_REQUIRE(error == 0);
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Middle
+    period = nperiods / 2;
+    error = SMO_getDateTime(p_handle, period, &dt);
+    BOOST_REQUIRE(error == 0);
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Last
+    period = nperiods - 1;
+    error = SMO_getDateTime(p_handle, nperiods - 1, &dt);
+    BOOST_REQUIRE(error == 0);
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Out-of-range
+    dt = 42.0;
+    error = SMO_getDateTime(p_handle, nperiods, &dt);
+    BOOST_CHECK_EQUAL(error, 422);
+    BOOST_CHECK_EQUAL(dt, -1.0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_getDateSeries, Fixture) {
+    // Gather meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 0);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // Full range [0, nperiods-1]
+    double* dates = NULL;
+    int len = 0;
+    error = SMO_getDateSeries(p_handle, 0, nperiods - 1, &dates, &len);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(dates != NULL);
+    BOOST_CHECK_EQUAL(len, nperiods);
+
+    // First equals StartDate
+    int period = 0;
+    BOOST_CHECK_CLOSE(dates[0], startDate + (period + 1) * stepDays, 1e-6);
+
+    // Monotonic, constant step
+    for (int i = 1; i < len; ++i) {
+        BOOST_CHECK_CLOSE(dates[i] - dates[i - 1], stepDays, 1e-6);
+        // Cross-check SMO_getDateTime
+        double dt = -1.0;
+        int rc = SMO_getDateTime(p_handle, i, &dt);
+        BOOST_REQUIRE(rc == 0);
+        BOOST_CHECK_CLOSE(dates[i], dt, 1e-6);
+    }
+
+    SMO_freeMemory((void*)dates);
+
+    // Invalid range
+    dates = NULL; len = 123;
+    error = SMO_getDateSeries(p_handle, 2, 1, &dates, &len);
+    BOOST_CHECK_EQUAL(error, 422);
+    BOOST_CHECK(dates == NULL);
+    BOOST_CHECK_EQUAL(len, 0);
+}
+
+
+
+
 BOOST_FIXTURE_TEST_CASE(test_getSubcatchSeries, Fixture) {
     error = SMO_getSubcatchSeries(p_handle, 1, SMO_runoff_rate, 0, 10, &array,
                                   &array_dim);
