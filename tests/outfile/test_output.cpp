@@ -297,7 +297,7 @@ BOOST_FIXTURE_TEST_CASE(test_getDateTime, Fixture) {
 
     // Last
     period = nperiods - 1;
-    error = SMO_getDateTime(p_handle, nperiods - 1, &dt);
+    error = SMO_getDateTime(p_handle, period, &dt);
     BOOST_REQUIRE(error == 0);
     BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
 
@@ -358,6 +358,56 @@ BOOST_FIXTURE_TEST_CASE(test_getDateSeries, Fixture) {
     BOOST_CHECK_EQUAL(len, 0);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_decodeDate, Fixture) {
+    // Meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec == 3600); // existing fixture expects 1-hour steps
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods == 36);
+
+    // Decode StartDate (known: 35796.0 -> 1998-01-01 00:00:00)
+    int y = -1, m = -1, d = -1, hh = -1, mm = -1, ss = -1, dow = -1;
+    SMO_decodeDate(startDate, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 1);
+    BOOST_CHECK_EQUAL(hh, 0);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+    BOOST_CHECK(dow >= 0 && dow <= 6);
+
+    // First reporting period (startDate + 1 hour)
+    double dt = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt);
+    BOOST_REQUIRE(error == 0);
+    SMO_decodeDate(dt, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 1);
+    BOOST_CHECK_EQUAL(hh, 1);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+
+    // Last reporting period (36th hour -> 1998-01-02 12:00:00)
+    error = SMO_getDateTime(p_handle, nperiods - 1, &dt);
+    BOOST_REQUIRE(error == 0);
+    SMO_decodeDate(dt, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 2);
+    BOOST_CHECK_EQUAL(hh, 12);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+}
 
 
 
