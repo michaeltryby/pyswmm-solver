@@ -20,7 +20,7 @@
 #include "messages.h"
 
 #include "swmm_output.h"
-
+#include "shared/datetime.h"
 
 // NOTE: These depend on machine data model and may change when porting
 // F_OFF Must be a 8 byte / 64 bit integer for large file support
@@ -526,6 +526,19 @@ int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int e
     }
     if (errorcode && temp) { free(temp); *outDateArray = NULL; *length = 0; }
     return set_error(p_data->error_handle, errorcode);
+}
+
+void  EXPORT_OUT_API SMO_decodeDate(double date, int *year, int *month, int *day,
+      int *hour, int *minute, int *second, int *dayOfWeek)
+//
+//  Input:  date = an encoded date in decimal days
+//  Output: date's year, month of year, day of month, time of day (hour,
+//           minute, second), and day of weeek
+//  Purpose: retrieves the calendar date and clock time of an encoded date.
+{
+    datetime_decodeDate(date, year, month, day);
+    datetime_decodeTime(date, hour, minute, second);
+    *dayOfWeek = datetime_dayOfWeek(date);
 }
 
 

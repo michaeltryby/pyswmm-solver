@@ -21,12 +21,15 @@ set(SWMM_OUT_PUBLIC_HEADERS
 add_library(swmm-output
         swmm_output.c
         errormanager.c
+        $<TARGET_OBJECTS:shared_objs>
 )
 
 target_include_directories(swmm-output
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
 include(GenerateExportHeader)
