@@ -522,4 +522,89 @@ BOOST_FIXTURE_TEST_CASE(test_getSystemResult, Fixture) {
     BOOST_CHECK(check_cdd_float(test_vec, ref_vec, 3));
 }
 
+
+
+BOOST_FIXTURE_TEST_CASE(test_decodeDate_components_and_step, Fixture) {
+    // Meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 1);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // Decode first two timestamps
+    double dt0 = -1.0, dt1 = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt0);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getDateTime(p_handle, 1, &dt1);
+    BOOST_REQUIRE(error == 0);
+
+    int y, m, d, hh, mm, ss, dow;
+
+    // First period components are within valid ranges
+    SMO_decodeDate(dt0, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK(y >= 1900 && y <= 2200);
+    BOOST_CHECK(m >= 1 && m <= 12);
+    BOOST_CHECK(d >= 1 && d <= 31);
+    BOOST_CHECK(hh >= 0 && hh <= 23);
+    BOOST_CHECK(mm >= 0 && mm <= 59);
+    BOOST_CHECK(ss >= 0 && ss <= 59);
+    BOOST_CHECK(dow >= 0 && dow <= 6);
+
+    // Step consistency between adjacent periods
+    BOOST_CHECK_CLOSE(dt1 - dt0, stepDays, 1e-8);
+
+    // First period should be at or after StartDate
+    BOOST_CHECK(dt0 >= startDate - 1e-12);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_decodeDate_day_of_week_progression, Fixture) {
+    // Meta
+    int reportStepSec = -1, nperiods = -1;
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+
+    // Only check DOW if the step divides a day evenly and we have ≥ 1 full day
+    if (86400 % reportStepSec != 0 || nperiods < (86400 / reportStepSec)) {
+        BOOST_TEST_MESSAGE("Skipping DOW progression: report step does not divide a day or not enough periods.");
+        return;
+    }
+
+    const int periodsPerDay = 86400 / reportStepSec;
+
+    double dt0 = -1.0, dtDayLater = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt0);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getDateTime(p_handle, periodsPerDay, &dtDayLater);
+    BOOST_REQUIRE(error == 0);
+
+    int y0, m0, d0, h0, min0, s0, dow0;
+    int y1, m1, d1, h1, min1, s1, dow1;
+
+    SMO_decodeDate(dt0, &y0, &m0, &d0, &h0, &min0, &s0, &dow0);
+    SMO_decodeDate(dtDayLater, &y1, &m1, &d1, &h1, &min1, &s1, &dow1);
+
+    // Day-of-week should advance by 1 modulo 7 after exactly one day
+    BOOST_CHECK_EQUAL(((dow0 + 1) % 7), dow1);
+
+    // Time-of-day should be identical after exactly one day
+    BOOST_CHECK_EQUAL(h0, h1);
+    BOOST_CHECK_EQUAL(min0, min1);
+    BOOST_CHECK_EQUAL(s0, s1);
+}
+
+
+
 BOOST_AUTO_TEST_SUITE_END()
