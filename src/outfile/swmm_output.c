@@ -362,7 +362,13 @@ int EXPORT_OUT_API SMO_getUnits(SMO_Handle p_handle, int **unitFlag, int *length
 
 int EXPORT_OUT_API SMO_getStartDate(SMO_Handle p_handle, double *date)
 //
-//	Purpose: Returns start date.
+//	Purpose: 
+//    Returns report start date
+//
+//  Note: 
+//    If reporting start date > simulation start date (a report start 
+//    delay) then the saved starting report date is one reporting 
+//    period prior to the date of the first reported result
 //
 {
     int     errorcode = 0;

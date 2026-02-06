@@ -287,6 +287,8 @@ BOOST_FIXTURE_TEST_CASE(test_getDateTime, Fixture) {
     int period = 0;
     error = SMO_getDateTime(p_handle, period, &dt);
     BOOST_REQUIRE(error == 0);
+    // Note: even though the period index is zero the 
+    // first reporting period is at StartDate + 1 step
     BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
 
     // Middle
