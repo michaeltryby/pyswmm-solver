@@ -561,7 +561,7 @@ BOOST_FIXTURE_TEST_CASE(test_decodeDate_components_and_step, Fixture) {
     BOOST_CHECK(hh >= 0 && hh <= 23);
     BOOST_CHECK(mm >= 0 && mm <= 59);
     BOOST_CHECK(ss >= 0 && ss <= 59);
-    BOOST_CHECK(dow >= 0 && dow <= 6);
+    BOOST_CHECK(dow >= 1 && dow <= 7);
 
     // Step consistency between adjacent periods
     BOOST_CHECK_CLOSE(dt1 - dt0, stepDays, 1e-8);
