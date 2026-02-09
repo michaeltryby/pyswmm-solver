@@ -539,7 +539,7 @@ void  EXPORT_OUT_API SMO_decodeDate(double date, int *year, int *month, int *day
 //
 //  Input:  date = an encoded date in decimal days
 //  Output: date's year, month of year, day of month, time of day (hour,
-//           minute, second), and day of weeek
+//           minute, second), and day of week
 //  Purpose: retrieves the calendar date and clock time of an encoded date.
 {
     datetime_decodeDate(date, year, month, day);
