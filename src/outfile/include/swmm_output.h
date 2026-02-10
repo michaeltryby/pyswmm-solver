@@ -40,6 +40,10 @@ int EXPORT_OUT_API SMO_getStartDate(SMO_Handle p_handle, double *date);
 int EXPORT_OUT_API SMO_getTimes(SMO_Handle p_handle, SMO_time code, int *time);
 int EXPORT_OUT_API SMO_getElementName(SMO_Handle p_handle, SMO_elementType type, int elementIndex, char **elementName, int *size);
 
+int EXPORT_OUT_API SMO_getDateTime(SMO_Handle p_handle, int periodIndex, double *date);
+int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int endPeriod, double **double_out, int *int_dim);
+void EXPORT_OUT_API SMO_decodeDate(double date, int *year, int *month, int *day, int *hour, int *minute, int *second, int *dayOfWeek);
+
 int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex, SMO_subcatchAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
 int EXPORT_OUT_API SMO_getNodeSeries(SMO_Handle p_handle, int nodeIndex, SMO_nodeAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
 int EXPORT_OUT_API SMO_getLinkSeries(SMO_Handle p_handle, int linkIndex, SMO_linkAttribute attr, int startPeriod, int endPeriod, float **float_out, int *int_dim);
