@@ -385,7 +385,7 @@ BOOST_FIXTURE_TEST_CASE(test_decodeDate, Fixture) {
     BOOST_CHECK_EQUAL(hh, 0);
     BOOST_CHECK_EQUAL(mm, 0);
     BOOST_CHECK_EQUAL(ss, 0);
-    BOOST_CHECK(dow >= 0 && dow <= 6);
+    BOOST_CHECK(dow >= 1 && dow <= 7);
 
     // First reporting period (startDate + 1 hour)
     double dt = -1.0;
@@ -578,8 +578,8 @@ BOOST_FIXTURE_TEST_CASE(test_decodeDate_day_of_week_progression, Fixture) {
     error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
     BOOST_REQUIRE(error == 0);
 
-    // Only check DOW if the step divides a day evenly and we have ≥ 1 full day
-    if (86400 % reportStepSec != 0 || nperiods < (86400 / reportStepSec)) {
+    // Only check DOW if the step divides a day evenly and we have > 1 full day
+    if (86400 % reportStepSec != 0 || nperiods <= (86400 / reportStepSec)) {
         BOOST_TEST_MESSAGE("Skipping DOW progression: report step does not divide a day or not enough periods.");
         return;
     }
@@ -598,8 +598,8 @@ BOOST_FIXTURE_TEST_CASE(test_decodeDate_day_of_week_progression, Fixture) {
     SMO_decodeDate(dt0, &y0, &m0, &d0, &h0, &min0, &s0, &dow0);
     SMO_decodeDate(dtDayLater, &y1, &m1, &d1, &h1, &min1, &s1, &dow1);
 
-    // Day-of-week should advance by 1 modulo 7 after exactly one day
-    BOOST_CHECK_EQUAL(((dow0 + 1) % 7), dow1);
+       // Day-of-week should advance by 1 (with 1..7 encoding) after exactly one day
+    BOOST_CHECK_EQUAL(((dow0 % 7) + 1), dow1);
 
     // Time-of-day should be identical after exactly one day
     BOOST_CHECK_EQUAL(h0, h1);

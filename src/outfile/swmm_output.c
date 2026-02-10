@@ -495,7 +495,7 @@ int EXPORT_OUT_API SMO_getDateTime(SMO_Handle p_handle, int periodIndex, double 
     if (!date) return -1;
     *date = -1.0;
 
-    if (p_data == NULL) errorcode = -1;
+    if (p_data == NULL) return -1;
     else if (periodIndex < 0 || periodIndex >= p_data->Nperiods) errorcode = 422;
     else *date = getTimeValue(p_data, periodIndex);
 
@@ -516,13 +516,13 @@ int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int e
     *outDateArray = NULL;
     *length = 0;
 
-    if (p_data == NULL) errorcode = -1;
+    if (p_data == NULL) return = -1;
     else if (startPeriod < 0 || endPeriod < startPeriod || endPeriod >= p_data->Nperiods)
         errorcode = 422;
     else {
         len = endPeriod - startPeriod + 1;
         temp = (double *)malloc((size_t)len * sizeof(double));
-        if (!temp) errorcode = 414;
+        if (!temp) errorcode = 411;
         else {
             for (k = 0; k < len; k++)
                 temp[k] = getTimeValue(p_data, startPeriod + k);
@@ -541,6 +541,7 @@ void  EXPORT_OUT_API SMO_decodeDate(double date, int *year, int *month, int *day
 //  Output: date's year, month of year, day of month, time of day (hour,
 //           minute, second), and day of week
 //  Purpose: retrieves the calendar date and clock time of an encoded date.
+//  Note:   output pointers must be non NULL
 {
     datetime_decodeDate(date, year, month, day);
     datetime_decodeTime(date, hour, minute, second);
