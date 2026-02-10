@@ -516,7 +516,7 @@ int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int e
     *outDateArray = NULL;
     *length = 0;
 
-    if (p_data == NULL) return = -1;
+    if (p_data == NULL) return -1;
     else if (startPeriod < 0 || endPeriod < startPeriod || endPeriod >= p_data->Nperiods)
         errorcode = 422;
     else {
