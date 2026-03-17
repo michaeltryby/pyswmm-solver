@@ -2099,7 +2099,7 @@ EXPORT_TOOLKIT int swmm_getReportWindow(bool *isReady, double *lastReady, double
 }
 
 
-EXPORT_TOOLKIT int swmm_getNodeLiveResult(int index, SM_NodeResult type, double *result)
+EXPORT_TOOLKIT int swmm_getNodeLiveReport(int index, SM_NodeResult type, double *result)
 ///
 /// Input:   index = Index of desired ID
 ///          type = Result Type (SM_NodeResult)
@@ -2156,7 +2156,7 @@ EXPORT_TOOLKIT int swmm_getNodeLiveResult(int index, SM_NodeResult type, double 
 }
 
 
-EXPORT_TOOLKIT int swmm_getLinkLiveResult(int index, SM_LinkResult type, double *result)
+EXPORT_TOOLKIT int swmm_getLinkLiveReport(int index, SM_LinkResult type, double *result)
 ///
 /// Input:   index = Index of desired ID
 ///          type = Result Type (SM_LinkResult)
@@ -2207,7 +2207,7 @@ EXPORT_TOOLKIT int swmm_getLinkLiveResult(int index, SM_LinkResult type, double 
 }
 
 
-EXPORT_TOOLKIT int swmm_getSubcatchLiveResult(int index, SM_SubcResult type, double *result)
+EXPORT_TOOLKIT int swmm_getSubcatchLiveReport(int index, SM_SubcResult type, double *result)
 ///
 /// Input:   index = Index of desired ID
 ///          type = Result Type (SM_SubcResult)

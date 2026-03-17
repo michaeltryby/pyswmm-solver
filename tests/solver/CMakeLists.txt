@@ -74,12 +74,12 @@ set_target_properties(
 
 # Live Results Test Module
 add_executable(
-  test_live_results
-    test_live_results.cpp
+  test_live_report
+    test_live_report.cpp
 )
 
 target_link_libraries(
-  test_live_results
+  test_live_report
     PUBLIC
         swmm5
         swmm-output
@@ -88,6 +88,6 @@ target_link_libraries(
 )
 
 set_target_properties(
-  test_live_results
+  test_live_report
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

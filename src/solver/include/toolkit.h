@@ -426,7 +426,7 @@ EXPORT_TOOLKIT int swmm_getReportWindow(bool *isReady, double *lastReady, double
  @param[out] result The interpolated result for the node
  @return Error code
 */
-EXPORT_TOOLKIT int swmm_getNodeLiveResult(int index, SM_NodeResult type, double *result);
+EXPORT_TOOLKIT int swmm_getNodeLiveReport(int index, SM_NodeResult type, double *result);
 
 /**
  @brief Get a link result aligned with the reporting time grid.
@@ -435,7 +435,7 @@ EXPORT_TOOLKIT int swmm_getNodeLiveResult(int index, SM_NodeResult type, double 
  @param[out] result The interpolated result for the link
  @return Error code
 */
-EXPORT_TOOLKIT int swmm_getLinkLiveResult(int index, SM_LinkResult type, double *result);
+EXPORT_TOOLKIT int swmm_getLinkLiveReport(int index, SM_LinkResult type, double *result);
 
 /**
  @brief Get a subcatchment result aligned with the reporting time grid.
@@ -444,7 +444,7 @@ EXPORT_TOOLKIT int swmm_getLinkLiveResult(int index, SM_LinkResult type, double 
  @param[out] result The interpolated result for the subcatchment
  @return Error code
 */
-EXPORT_TOOLKIT int swmm_getSubcatchLiveResult(int index, SM_SubcResult type, double *result);
+EXPORT_TOOLKIT int swmm_getSubcatchLiveReport(int index, SM_SubcResult type, double *result);
 
 
 

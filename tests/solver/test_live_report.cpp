@@ -90,15 +90,15 @@ BOOST_FIXTURE_TEST_CASE(report_results_match_saved_values, FixtureBeforeStep_Sav
         BOOST_REQUIRE(error == ERR_NONE);
 
         if (isReady) {
-            error = swmm_getNodeLiveResult(nde_ind, SM_NODEDEPTH, &val_node);
+            error = swmm_getNodeLiveReport(nde_ind, SM_NODEDEPTH, &val_node);
             BOOST_REQUIRE(error == ERR_NONE);
 
-            error = swmm_getLinkLiveResult(lnk_ind, SM_LINKFLOW, &val_link);
+            error = swmm_getLinkLiveReport(lnk_ind, SM_LINKFLOW, &val_link);
             BOOST_REQUIRE(error == ERR_NONE);
 
-            error = swmm_getSubcatchLiveResult(subc_ind, SM_SUBCRAIN, &val_subc);
+            error = swmm_getSubcatchLiveReport(subc_ind, SM_SUBCRAIN, &val_subc);
             BOOST_REQUIRE(error == ERR_NONE);
-            
+
             // Store the live values for comparison once the run completes
             reportTimes.push_back(readyDateTime);
             nodeLive.push_back(val_node);
