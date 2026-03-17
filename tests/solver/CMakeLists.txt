@@ -70,3 +70,24 @@ set_target_properties(
   test_solver
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
+
+
+# Live Results Test Module
+add_executable(
+  test_live_results
+    test_live_results.cpp
+)
+
+target_link_libraries(
+  test_live_results
+    PUBLIC
+        swmm5
+        swmm-output
+    PRIVATE
+        boost_test_headers
+)
+
+set_target_properties(
+  test_live_results
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
