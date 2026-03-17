@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include "test_predicates.hpp"
+
 extern "C" {
 #include "swmm5.h"
 #include "toolkit.h"
@@ -29,6 +31,8 @@ extern "C" {
 
 #define ERR_NONE 0
 #define ERR_TKAPI_REPORT_UNAVAILABLE 2014
+
+
 
 // Fixture dedicated to exercising live result APIs while persisting output
 struct FixtureBeforeStep_SaveResults {
@@ -144,13 +148,14 @@ BOOST_FIXTURE_TEST_CASE(report_results_match_saved_values, FixtureBeforeStep_Sav
     BOOST_REQUIRE_EQUAL(linkLen, reportCount);
     BOOST_REQUIRE_EQUAL(subcLen, reportCount);
 
-    const double tolerance = 1.0e-3;
-    for (int i = 0; i < reportCount; ++i)
-    {
-        BOOST_CHECK_CLOSE(nodeLive[i], static_cast<double>(nodeSeries[i]), tolerance);
-        BOOST_CHECK_CLOSE(linkLive[i], static_cast<double>(linkSeries[i]), tolerance);
-        BOOST_CHECK_CLOSE(subcLive[i], static_cast<double>(subcSeries[i]), tolerance);
-    }
+    std::vector<double> nodeSaved(nodeSeries, nodeSeries + nodeLen);
+    std::vector<double> linkSaved(linkSeries, linkSeries + linkLen);
+    std::vector<double> subcSaved(subcSeries, subcSeries + subcLen);
+
+    const long cddTolerance = 10;
+    BOOST_CHECK(check_cdd_double(nodeLive, nodeSaved, cddTolerance));
+    BOOST_CHECK(check_cdd_double(linkLive, linkSaved, cddTolerance));
+    BOOST_CHECK(check_cdd_double(subcLive, subcSaved, cddTolerance));
 
     SMO_freeMemory(nodeSeries);
     SMO_freeMemory(linkSeries);
