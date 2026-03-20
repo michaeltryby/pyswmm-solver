@@ -1,7 +1,7 @@
 /*
  ******************************************************************************
  Project:      OWA SWMM
- Version:      5.1.13
+ Version:      5.2
  Module:       test_live_results.cpp
  Description:  tests that compare live toolkit results to saved output
  Authors:      see AUTHORS

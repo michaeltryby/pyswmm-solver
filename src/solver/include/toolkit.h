@@ -410,6 +410,8 @@ EXPORT_TOOLKIT int swmm_setSimulationDateTime(SM_TimePropety type, int year, int
 EXPORT_TOOLKIT int swmm_getCurrentDateTime(int *year, int *month, int *day,
                                       int *hour, int *minute, int *second);
 
+
+
 /**
  @brief Retrieve metadata for the current report-aligned window.
  @param[out] lastReady Date/time (decimal days) for the most recent completed report (negative when unavailable)
