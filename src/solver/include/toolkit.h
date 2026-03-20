@@ -23,12 +23,6 @@
 #include "toolkit_structs.h"
 #include "toolkit_export.h"
 
-#include "../consts.h"
-#include "../enums.h"
-#include "../datetime.h"
-#include "../lid.h"
-#include "../inlet.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

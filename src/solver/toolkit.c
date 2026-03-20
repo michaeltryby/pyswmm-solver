@@ -21,13 +21,16 @@
 #include "version.h"
 #include "shared/cstr_helper.h"
 
+// Public Headers
 #include "swmm5.h"
 #include "toolkit.h"
 
-// Result buffers allocated in output.c (used for interpolated report values)
-extern float* SubcatchResults;
-extern float* NodeResults;
-extern float* LinkResults;
+// Private Headers
+#include "consts.h"
+#include "enums.h"
+#include "shared/datetime.h"
+#include "lid.h"
+#include "inlet.h"
 
 // Protect against lack of compiler support for OpenMP
 #if defined(_OPENMP)
@@ -39,6 +42,12 @@ int alt_omp_get_max_threads(void)
 #else
   int alt_omp_get_max_threads(void) { return 1;}
 #endif
+
+
+// Result buffers allocated in output.c (used for interpolated report values)
+extern float* SubcatchResults;
+extern float* NodeResults;
+extern float* LinkResults;
 
 // Function Declarations for API
 int  massbal_getRoutingTotal(SM_RoutingTotals **routingTot);

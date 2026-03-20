@@ -262,6 +262,157 @@ BOOST_FIXTURE_TEST_CASE(test_getElementName, Fixture) {
     SMO_freeMemory((void*)c_array);
 }
 
+
+
+BOOST_FIXTURE_TEST_CASE(test_getDateTime, Fixture) {
+    // Gather meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 0);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // First
+    double dt = -1.0;
+    int period = 0;
+    error = SMO_getDateTime(p_handle, period, &dt);
+    BOOST_REQUIRE(error == 0);
+    // Note: even though the period index is zero the 
+    // first reporting period is at StartDate + 1 step
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Middle
+    period = nperiods / 2;
+    error = SMO_getDateTime(p_handle, period, &dt);
+    BOOST_REQUIRE(error == 0);
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Last
+    period = nperiods - 1;
+    error = SMO_getDateTime(p_handle, period, &dt);
+    BOOST_REQUIRE(error == 0);
+    BOOST_CHECK_CLOSE(dt, startDate + (period + 1) * stepDays, 1e-6);
+
+    // Out-of-range
+    dt = 42.0;
+    error = SMO_getDateTime(p_handle, nperiods, &dt);
+    BOOST_CHECK_EQUAL(error, 422);
+    BOOST_CHECK_EQUAL(dt, -1.0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_getDateSeries, Fixture) {
+    // Gather meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 0);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // Full range [0, nperiods-1]
+    double* dates = NULL;
+    int len = 0;
+    error = SMO_getDateSeries(p_handle, 0, nperiods - 1, &dates, &len);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(dates != NULL);
+    BOOST_CHECK_EQUAL(len, nperiods);
+
+    // First equals StartDate
+    int period = 0;
+    BOOST_CHECK_CLOSE(dates[0], startDate + (period + 1) * stepDays, 1e-6);
+
+    // Monotonic, constant step
+    for (int i = 1; i < len; ++i) {
+        BOOST_CHECK_CLOSE(dates[i] - dates[i - 1], stepDays, 1e-6);
+        // Cross-check SMO_getDateTime
+        double dt = -1.0;
+        int rc = SMO_getDateTime(p_handle, i, &dt);
+        BOOST_REQUIRE(rc == 0);
+        BOOST_CHECK_CLOSE(dates[i], dt, 1e-6);
+    }
+
+    SMO_freeMemory((void*)dates);
+
+    // Invalid range
+    dates = NULL; len = 123;
+    error = SMO_getDateSeries(p_handle, 2, 1, &dates, &len);
+    BOOST_CHECK_EQUAL(error, 422);
+    BOOST_CHECK(dates == NULL);
+    BOOST_CHECK_EQUAL(len, 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_decodeDate, Fixture) {
+    // Meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec == 3600); // existing fixture expects 1-hour steps
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods == 36);
+
+    // Decode StartDate (known: 35796.0 -> 1998-01-01 00:00:00)
+    int y = -1, m = -1, d = -1, hh = -1, mm = -1, ss = -1, dow = -1;
+    SMO_decodeDate(startDate, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 1);
+    BOOST_CHECK_EQUAL(hh, 0);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+    BOOST_CHECK(dow >= 1 && dow <= 7);
+
+    // First reporting period (startDate + 1 hour)
+    double dt = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt);
+    BOOST_REQUIRE(error == 0);
+    SMO_decodeDate(dt, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 1);
+    BOOST_CHECK_EQUAL(hh, 1);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+
+    // Last reporting period (36th hour -> 1998-01-02 12:00:00)
+    error = SMO_getDateTime(p_handle, nperiods - 1, &dt);
+    BOOST_REQUIRE(error == 0);
+    SMO_decodeDate(dt, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK_EQUAL(y, 1998);
+    BOOST_CHECK_EQUAL(m, 1);
+    BOOST_CHECK_EQUAL(d, 2);
+    BOOST_CHECK_EQUAL(hh, 12);
+    BOOST_CHECK_EQUAL(mm, 0);
+    BOOST_CHECK_EQUAL(ss, 0);
+}
+
+
+
 BOOST_FIXTURE_TEST_CASE(test_getSubcatchSeries, Fixture) {
     error = SMO_getSubcatchSeries(p_handle, 1, SMO_runoff_rate, 0, 10, &array,
                                   &array_dim);
@@ -372,5 +523,90 @@ BOOST_FIXTURE_TEST_CASE(test_getSystemResult, Fixture) {
 
     BOOST_CHECK(check_cdd_float(test_vec, ref_vec, 3));
 }
+
+
+
+BOOST_FIXTURE_TEST_CASE(test_decodeDate_components_and_step, Fixture) {
+    // Meta
+    double startDate = -1.0;
+    int reportStepSec = -1, nperiods = -1;
+
+    error = SMO_getStartDate(p_handle, &startDate);
+    BOOST_REQUIRE(error == 0);
+
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(reportStepSec > 0);
+
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+    BOOST_REQUIRE(nperiods > 1);
+
+    const double stepDays = reportStepSec / 86400.0;
+
+    // Decode first two timestamps
+    double dt0 = -1.0, dt1 = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt0);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getDateTime(p_handle, 1, &dt1);
+    BOOST_REQUIRE(error == 0);
+
+    int y, m, d, hh, mm, ss, dow;
+
+    // First period components are within valid ranges
+    SMO_decodeDate(dt0, &y, &m, &d, &hh, &mm, &ss, &dow);
+    BOOST_CHECK(y >= 1900 && y <= 2200);
+    BOOST_CHECK(m >= 1 && m <= 12);
+    BOOST_CHECK(d >= 1 && d <= 31);
+    BOOST_CHECK(hh >= 0 && hh <= 23);
+    BOOST_CHECK(mm >= 0 && mm <= 59);
+    BOOST_CHECK(ss >= 0 && ss <= 59);
+    BOOST_CHECK(dow >= 1 && dow <= 7);
+
+    // Step consistency between adjacent periods
+    BOOST_CHECK_CLOSE(dt1 - dt0, stepDays, 1e-8);
+
+    // First period should be at or after StartDate
+    BOOST_CHECK(dt0 >= startDate - 1e-12);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_decodeDate_day_of_week_progression, Fixture) {
+    // Meta
+    int reportStepSec = -1, nperiods = -1;
+    error = SMO_getTimes(p_handle, SMO_reportStep, &reportStepSec);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getTimes(p_handle, SMO_numPeriods, &nperiods);
+    BOOST_REQUIRE(error == 0);
+
+    // Only check DOW if the step divides a day evenly and we have > 1 full day
+    if (86400 % reportStepSec != 0 || nperiods <= (86400 / reportStepSec)) {
+        BOOST_TEST_MESSAGE("Skipping DOW progression: report step does not divide a day or not enough periods.");
+        return;
+    }
+
+    const int periodsPerDay = 86400 / reportStepSec;
+
+    double dt0 = -1.0, dtDayLater = -1.0;
+    error = SMO_getDateTime(p_handle, 0, &dt0);
+    BOOST_REQUIRE(error == 0);
+    error = SMO_getDateTime(p_handle, periodsPerDay, &dtDayLater);
+    BOOST_REQUIRE(error == 0);
+
+    int y0, m0, d0, h0, min0, s0, dow0;
+    int y1, m1, d1, h1, min1, s1, dow1;
+
+    SMO_decodeDate(dt0, &y0, &m0, &d0, &h0, &min0, &s0, &dow0);
+    SMO_decodeDate(dtDayLater, &y1, &m1, &d1, &h1, &min1, &s1, &dow1);
+
+       // Day-of-week should advance by 1 (with 1..7 encoding) after exactly one day
+    BOOST_CHECK_EQUAL(((dow0 % 7) + 1), dow1);
+
+    // Time-of-day should be identical after exactly one day
+    BOOST_CHECK_EQUAL(h0, h1);
+    BOOST_CHECK_EQUAL(min0, min1);
+    BOOST_CHECK_EQUAL(s0, s1);
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END()

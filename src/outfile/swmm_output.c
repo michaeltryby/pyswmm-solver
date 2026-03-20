@@ -20,7 +20,7 @@
 #include "messages.h"
 
 #include "swmm_output.h"
-
+#include "shared/datetime.h"
 
 // NOTE: These depend on machine data model and may change when porting
 // F_OFF Must be a 8 byte / 64 bit integer for large file support
@@ -362,7 +362,13 @@ int EXPORT_OUT_API SMO_getUnits(SMO_Handle p_handle, int **unitFlag, int *length
 
 int EXPORT_OUT_API SMO_getStartDate(SMO_Handle p_handle, double *date)
 //
-//	Purpose: Returns start date.
+//	Purpose: 
+//    Returns report start date
+//
+//  Note: 
+//    If reporting start date > simulation start date (a report start 
+//    delay) then the saved starting report date is one reporting 
+//    period prior to the date of the first reported result
 //
 {
     int     errorcode = 0;
@@ -475,6 +481,74 @@ int EXPORT_OUT_API SMO_getElementName(SMO_Handle p_handle, SMO_elementType type,
 
     return set_error(p_data->error_handle, errorcode);
 }
+
+
+
+int EXPORT_OUT_API SMO_getDateTime(SMO_Handle p_handle, int periodIndex, double *date)
+//
+//  Purpose: Return the REAL8 timestamp at a given 0-based period index.
+//
+{
+    int    errorcode = 0;
+    data_t *p_data = (data_t *)p_handle;
+
+    if (!date) return -1;
+    *date = -1.0;
+
+    if (p_data == NULL) return -1;
+    else if (periodIndex < 0 || periodIndex >= p_data->Nperiods) errorcode = 422;
+    else *date = getTimeValue(p_data, periodIndex);
+
+    return set_error(p_data->error_handle, errorcode);
+}
+
+int EXPORT_OUT_API SMO_getDateSeries(SMO_Handle p_handle, int startPeriod, int endPeriod,
+                                     double **outDateArray, int *length)
+//
+//  Purpose: Return an array of REAL8 timestamps for [startPeriod, endPeriod] (0-based, inclusive).
+//
+{
+    int     k, len, errorcode = 0;
+    double *temp = NULL;
+    data_t *p_data = (data_t *)p_handle;
+
+    if (!outDateArray || !length) return -1;
+    *outDateArray = NULL;
+    *length = 0;
+
+    if (p_data == NULL) return -1;
+    else if (startPeriod < 0 || endPeriod < startPeriod || endPeriod >= p_data->Nperiods)
+        errorcode = 422;
+    else {
+        len = endPeriod - startPeriod + 1;
+        temp = (double *)malloc((size_t)len * sizeof(double));
+        if (!temp) errorcode = 411;
+        else {
+            for (k = 0; k < len; k++)
+                temp[k] = getTimeValue(p_data, startPeriod + k);
+            *outDateArray = temp;
+            *length = len;
+        }
+    }
+    if (errorcode && temp) { free(temp); *outDateArray = NULL; *length = 0; }
+    return set_error(p_data->error_handle, errorcode);
+}
+
+void  EXPORT_OUT_API SMO_decodeDate(double date, int *year, int *month, int *day,
+      int *hour, int *minute, int *second, int *dayOfWeek)
+//
+//  Input:  date = an encoded date in decimal days
+//  Output: date's year, month of year, day of month, time of day (hour,
+//           minute, second), and day of week
+//  Purpose: retrieves the calendar date and clock time of an encoded date.
+//  Note:   output pointers must be non NULL
+{
+    datetime_decodeDate(date, year, month, day);
+    datetime_decodeTime(date, hour, minute, second);
+    *dayOfWeek = datetime_dayOfWeek(date);
+}
+
+
 
 int EXPORT_OUT_API SMO_getSubcatchSeries(SMO_Handle p_handle, int subcatchIndex,
     SMO_subcatchAttribute attr, int startPeriod, int endPeriod,
